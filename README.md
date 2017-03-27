@@ -1,6 +1,6 @@
 # IMS
-##Web3 library builds incorrectly with Webpack ##
-###Error ###
+## Web3 library builds incorrectly with Webpack ##
+### Error ###
 https://github.com/ethereum/web3.js/issues/555
 Missing semicolon on build
 '        if (options.value > 0) {
@@ -13,7 +13,7 @@ Missing semicolon on build
             }
         }
 '
-### WOrkaround  ###
+### Workaround  ###
 Add semicolon to built bundle.js
 
 `
