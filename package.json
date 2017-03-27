@@ -1,0 +1,41 @@
+{
+  "name": "ims",
+  "version": "1.0.0",
+  "description": "identity management service",
+  "main": "index.js",
+  "scripts": {
+    "test": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nazarfil/IMS.git"
+  },
+  "keywords": [
+    "kyc",
+    "ethereum",
+    "blockchain",
+    "solidity"
+  ],
+  "author": "Nazar FIlipchuk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nazarfil/IMS/issues"
+  },
+  "homepage": "https://github.com/nazarfil/IMS#readme",
+  "devDependencies": {
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-react": "^6.23.0",
+    "css-loader": "^0.27.3",
+    "jshint": "^2.9.4",
+    "jshint-loader": "^0.8.4",
+    "node-libs-browser": "^2.0.0",
+    "source-map-loader": "^0.2.0",
+    "webpack": "^2.3.2"
+  },
+  "dependencies": {
+    "angular": "^1.6.3",
+    "web3": "0.17.0-alpha"
+  }
+}
