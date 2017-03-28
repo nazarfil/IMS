@@ -1,6 +1,6 @@
 pragma solidity ^0.4.10;
 
-contract test_contract {
+contract IMS {
     
     struct idVerfifier{
         bool isRegistered;
@@ -42,9 +42,12 @@ contract test_contract {
     mapping (address => idAltInfo) identifiers_v2;
     mapping (address => idVerfifier) verifiers;
     address toVerify;
-    
+    string contractName;
     //
 
+    function IMS(){
+        contractName = "Identity Management Tool";
+    }
     
     function estimateRisk(bool isPEP, bool other, uint16 amount) returns (uint16 risk){
         risk = 0;

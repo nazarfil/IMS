@@ -8,17 +8,17 @@
 
     <body class="container" ng-app="app" ng-controller='appController as vm'>
         <!--<script type='text/javascript' src='bundle.js' charset='utf-8'></script> -->
-        <div classe="container-fluid main-context">
+        <div classe="container-fluid">
             <div class="header">
                 {{vm.title}}
             </div>
-            <div class="container-fluid">
+            <div class="container-fluid main-context">
                 <div class="row">
                 <div class="col-md-6">
                     <h2>Accounts</h2>
                     <dl class="dl-horizontal" ng-repeat="acc in vm.accounts">
-                        <dd>Acc</dd>
-                        <dt>{{acc}}</dt>
+                        <dt>Acc</dt>
+                        <dd>{{acc}}</dd>
                     </dl>
                 </div>
                 <div class="col-md-6">
@@ -26,9 +26,15 @@
                     <div class="card">
                         <div class="card-block">
                             <h2 class="card-title">Run Contract</h2>
-                            <button class="btn btn-primary">Deploy</button>
+                            <button class="btn btn-primary" ng-click='vm.mineContract()'>Deploy</button>
                         </div>
                     </div>                    
+                    <div>
+                        <dl class="dl-horizontal" ng-repeat="ctr in vm.contracts">
+                            <dt>Contract mined</dt>
+                            <dd>{{ctr.address}}</dd>
+                        </dl>
+                    </div>
                 </div>
             </div>
         </div>

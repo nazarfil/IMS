@@ -1,1 +1,7 @@
+
+bundle.js
+logger.es6
+npm_debug.log
+contract.js
 node_modules/*
+
