@@ -48,6 +48,7 @@
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.10.1",
     "jquery": "^3.2.1",
+    "solc": "^0.4.10",
     "tether": "^1.4.0",
     "web3": "0.17.0-alpha"
   }

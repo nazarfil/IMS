@@ -1,4 +1,4 @@
-pragma solidity ^0.4.10;
+pragma solidity ^0.4.6;
 
 contract IMS {
     
@@ -9,7 +9,6 @@ contract IMS {
         
     }
     
-    //
     struct idInformation{
         bool isRegistered;
         string fName;
@@ -20,7 +19,6 @@ contract IMS {
         uint signCounter;
     }
     
-    //
     struct idAuditor{
         bool isResgistered;
         string name;
@@ -29,24 +27,22 @@ contract IMS {
         uint[] cases;
     }
     
-    //
     struct idAltInfo{
         bytes32 hash;
         bool isRegistered;
         uint16 riskValue;
     }
     
-    // mappings
     mapping (address => idInformation) identifiers;
     mapping (address => idAuditor) auditors;
     mapping (address => idAltInfo) identifiers_v2;
     mapping (address => idVerfifier) verifiers;
     address toVerify;
     string contractName;
-    //
 
     function IMS(){
         contractName = "Identity Management Tool";
+        verifiers[msg.sender] = idVerfifier(true, 8, "ING:Longchamps");
     }
     
     function estimateRisk(bool isPEP, bool other, uint16 amount) returns (uint16 risk){
