@@ -23,7 +23,8 @@
 
         vm.accounts = web3.eth.accounts;
 
-       var asyncCompilation =function( code) {
+       var asyncCompilation = function( code) {
+            $log.log('Compilers ', web3.eth.getCompilers());
            var res =  web3.eth.compile.solidity(code);
            return $q.when(res);
        }
@@ -32,7 +33,6 @@
         var compiledCode = res;
         var abi = compiledCode.info.abiDefinition;
         vm.abi = abi;
-        $log.log('Compilers ', web3.eth.getCompilers());
         $log.log('Comiled contract', compiledCode);
         var ballot_sol_imsContract = web3.eth.contract(abi);
         vm.mineContract = function(){
@@ -58,7 +58,14 @@
                 
                 vm.contract = web3.eth.contract(abi).at(addr);
                 vm.activeIndex = idx;
-                vm.contractData.coins = vm.contract.verifyIdentity.call();
+
+                vm.events = vm.contract.allEvents();
+
+                // watch for changes
+                vm.events.watch(function(error, event){
+                if (!error)
+                    console.log(event);
+                });
         };
 
         vm.closeContract = function(){
@@ -68,22 +75,41 @@
 
         vm.checkAddress = function(acc_to_verify, idx){
                 vm.activeIndex2 = idx;
+                $log.log('Verifying', acc_to_verify);
                 vm.contractData.check = vm.contract.verifyIdentity.call(acc_to_verify);
+                var resp = vm.contract.getAddresses.call();
+                $log.log('Addreses', resp);
         };
 
-        vm.addAddress = function(acc){
+        vm.addAddress = function(input){
             var newAcc = {
-                acc:acc,
-                fname:'Nazar',
-                lname:'Filipchuk',
-                addr:'av chat w',
+                acc:input,
+                fname:'Naz',
+                lname:'Fil',
+                addr:'avChatW',
                 pep:false
             }
-            var added = vm.contract.addIdentity.call(newAcc.acc, newAcc.addr, newAcc.fname, newAcc.lname, newAcc.addr, newAcc.pep);
+            //vm.contract.changeArray(input, {from: web3.eth.accounts[0], gas:300000});
+            
+            vm.contract.addIdentity(newAcc.acc, newAcc.fname, newAcc.lname, newAcc.addr, newAcc.pep
+                ,
+                {   from: web3.eth.accounts[0], 
+                    gas:1000000
+                });
+            
 
-             $log.info('Response->', added);
        
         };
+
+        // can be 'latest' or 'pending'
+        var filter = web3.eth.filter('latest');      
+        // watch for changes
+        filter.watch(function(error, result){
+        if (!error)
+            $log.log('Latest Block state',result);
+        });
+
+
        //var code = web3.eth.compile.solidity('../contract.sol')
        // var compiled = web3.eth.compile.solidity(contractSource);
 

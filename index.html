@@ -57,10 +57,8 @@
                             </dd>
                             <div class="card" style="color:black;" ng-if="$index == vm.activeIndex">
                                 <div class="card-block">
-                                    <p>Contract at {{vm.contract.address}} </p>
-                                    <div ng-repeat='abi in vm.contract.abi'
-                                       <span >{{abi}}</span> 
-                                    </div>
+                                    <p>Address of contract: {{vm.contract.address}} </p>
+                                    <span>Transaction Hash: {{vm.contract.transactionHash}} </span>
                                 </div>
                             </div>
                         </dl>
@@ -68,6 +66,7 @@
                 </div>
             </div>
         </div>
+     </div>
     </body>
 </html>
 
