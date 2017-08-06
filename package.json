@@ -29,6 +29,7 @@
     "babel-preset-react": "^6.23.0",
     "bootstrap-loader": "^2.0.0-beta.20",
     "css-loader": "^0.27.3",
+    "file-loader": "^0.10.1",
     "jshint": "^2.9.4",
     "jshint-loader": "^0.8.4",
     "node-libs-browser": "^2.0.0",
@@ -46,8 +47,9 @@
     "angular-bootstrap": "*",
     "bootstrap": "*",
     "extract-text-webpack-plugin": "^2.1.0",
-    "file-loader": "^0.10.1",
+    "fs": "0.0.1-security",
     "jquery": "^3.2.1",
+    "raw-loader": "^0.5.1",
     "solc": "^0.4.10",
     "tether": "^1.4.0",
     "web3": "0.17.0-alpha"

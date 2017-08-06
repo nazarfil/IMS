@@ -1,7 +1,7 @@
 
 (function(){
     'use strict';
-    angular.module('app').controller('appController', function($log, $scope,$http, $q){
+    angular.module('app').controller('appController', function($log, $scope,$http, $q, $rootScope){
 
         $log.log('Controller initiated');
         var vm= this;
@@ -21,39 +21,23 @@
             
         $log.log('Web 3 loaded', web3.eth.accounts);
 
+
         vm.accounts = web3.eth.accounts;
 
-       var asyncCompilation = function( code) {
-            $log.log('Compilers ', web3.eth.getCompilers());
-           var res =  web3.eth.compile.solidity(code);
-           return $q.when(res);
-       }
+        vm.addContract = function(){
 
-       asyncCompilation(contractSource).then( function(res){
-        var compiledCode = res;
-        var abi = compiledCode.info.abiDefinition;
-        vm.abi = abi;
-        $log.log('Comiled contract', compiledCode);
-        var ballot_sol_imsContract = web3.eth.contract(abi);
-        vm.mineContract = function(){
-            var ballot_sol_ims = ballot_sol_imsContract.new(
-        {
-            from: web3.eth.accounts[0], 
-            data: compiledCode.code, 
-            gas: '4700000'
-        }, function (e, contract){
-            console.log(e, contract);
-            if (typeof contract.address !== 'undefined') {
-                vm.contracts.push(contract);
-                console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);
-                $log.log('Full contract', contract);
-                $scope.$apply();
-                
-            }
-        })
+           // var compiledCode = require('../contract.js');
+            web3.eth.sendTransaction({from:web3.eth.accounts[0], data: compiledCode, gas: '4700000'}, function(err, transactionHash) {
+                if (!err)
+                console.log(transactionHash);        
+                var receipt = web3.eth.getTransactionReceipt(transactionHash);
+                console.log("Contract Receipt" , receipt);
+                console.log("Contract address" , receipt.contractAddress);
+            });
+
+
         };
-       })
-        
+
         vm.showContract = function (abi, addr, idx){
                 
                 vm.contract = web3.eth.contract(abi).at(addr);

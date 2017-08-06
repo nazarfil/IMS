@@ -8,25 +8,19 @@ module.exports = {
     },
     watch:true,
     module: {
+    rules:[
+        {test: /\.bin/, use:'raw-loader'}
+    ],
+
     loaders: [
-           {
-        test: /\.sol$/,
-        loaders: ['web3', 'solc']
-    },
-     {
-        test: /\.sol$/,
-        loaders: ['solc']},
-    {
-      test: /\.js$/,
-      exclude: /(node_modules)/,
-      loaders: ['babel-loader'],
-      include: path.join(__dirname, 'src')
-    },
-    { test: /\.sol$/, loaders: ["solidity-loader?export=true"]},
-    { test: /\.css$/, loader: "style-loader!css-loader" },
-    { test: /\.png$/, loader: "url-loader?limit=100000" },
-    { test: /\.json$/, loader: "json-loader" },
-    { test: /\.jpg$/, loader: "file-loader" }
+        {
+            test: /\.sol$/,
+            loaders: ['web3', 'solc']
+        },
+        {   test: /\.sol$/,
+            loaders: ['solc']},
+        { test: /\.js$/,  loaders: ['babel-loader'], include: path.join(__dirname, 'src'), exclude: path.join(__dirname, 'node_modules')},
         
-    ]}
+        ]
+    }
 };

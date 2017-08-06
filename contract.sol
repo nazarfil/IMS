@@ -10,93 +10,64 @@ contract IMS {
         address indexed _from,
         string added_string
     );
-    struct idVerfifier{
+    
+    struct idValidator{
         bool isRegistered;
         uint branchID;
         string name;
         
     }
     
-    struct idInformation{
+    struct idCLient{
         bool isRegistered;
-        string fName;
-        string lName;
-        string addresse;
-        bool isPEP;
-        uint riskValue;
-        uint signCounter;
+        bytes32 info_hash;
+        string description;
     }
     
     struct idAuditor{
         bool isResgistered;
         string name;
         string entity;
-        string stillValid;
-        uint[] cases;
     }
     
-    struct idAltInfo{
-        bytes32 hash;
-        bool isRegistered;
-        uint16 riskValue;
-    }
-    
-    mapping (address => idInformation) public identifiers;
+    mapping (address => idCLient) public clients;
     mapping (address => idAuditor) public auditors;
-    mapping (address => idAltInfo) public identifiers_v2;
-    mapping (address => idVerfifier) public verifiers;
+    mapping (address => idValidator) public validators;
+
     address public toVerify;
-    string contractName;
+    string public contractName;
     address[] public registeredAddresses;
     string public registeredString;
 
     function IMS(){
         contractName = "Identity Management Tool";
-        verifiers[msg.sender] = idVerfifier(true, 8, "ING:Longchamps");
+        validators[msg.sender] = idValidator(true, 8, "GenesisValidator");
         registeredAddresses.push(msg.sender);
     }
     
-    function estimateRisk(bool isPEP, bool other, uint16 amount) returns (uint16 risk){
-        risk = 0;
-            
-            if(isPEP){
-                    risk =+ 10;
-                }
-            if(other){
-                    risk =+ 5;
-                }
-            if(amount > 1000){
-                    risk =+2;
-                }
+    
+    function addIdentity(address input, bytes32 info_hash, string description) payable{
         
-        }
-    function verifyIdentity(address toVerify) returns (bool){
-            if( identifiers[toVerify].isRegistered) 
-            {
-                return true;
-            }else{
-                return false;
-            }
-    }
-
-    function addIdentity(address input, string name_f, string name_l, string addr, bool is_pep) payable{
-        
-        if( verifiers[msg.sender].isRegistered == true){
-            if( identifiers[input].isRegistered ){
+        if( validators[msg.sender].isRegistered == true){
+            if( clients[input].isRegistered ){
                 feedBack(msg.sender, input, "NOT OK");
                 throw;
                 }else{
                     registeredAddresses.push(input);
-                    uint16 riskValue;
-                    uint16 estimated_amount= 800;
-                    riskValue = estimateRisk(is_pep, false, estimated_amount);
-                    bytes32 id_hash = sha3( name_f, name_l,  addr, is_pep);
-                    identifiers[input] = idInformation(true, name_f, name_l,  addr, is_pep, riskValue, 0);
-                    identifiers_v2[input] = idAltInfo(id_hash, true, riskValue);
+                    clients[input] = idCLient(true, info_hash, description);
                     feedBack(msg.sender, input, "OK");
                 }
             }else{
                throw;
+            }
+    }
+
+    function verifyIdentity(address toVerify) returns (bool){
+            if( clients[toVerify].isRegistered) 
+            {
+                return true;
+            }else{
+                return false;
             }
     }
 

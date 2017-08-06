@@ -9,7 +9,6 @@
     </head>
 
     <body class="container" ng-app="app" ng-controller='appController as vm'  class="ng-cloak">
-        <!--<script type='text/javascript' src='bundle.js' charset='utf-8'></script> -->
         <div classe="container-fluid">
             <div class="header">
                 {{vm.title}}
@@ -36,7 +35,7 @@
                     <div class="card">
                         <div class="card-block">
                             <h2 class="card-title">Run Contract</h2>
-                            <button class="btn btn-primary" ng-click='vm.mineContract()'>Deploy</button>
+                            <button class="btn btn-primary" ng-click='vm.addContract()'>Deploy</button>
                         </div>
                     </div>                    
                     <div>
