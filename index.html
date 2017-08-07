@@ -130,7 +130,7 @@
 
                             <label for="valId">Branch Id</label>
                             <input id="valId" class="form-control" type="numer" ng-model="vm.validator.id">
-                            <button class="btn btn-danger">Add Validator</button>
+                            <button class="btn btn-danger" ng-click="vm.addValidator()">Add Validator</button>
                         </form>
                     </div>
                     <div class="col-md-4">
@@ -142,7 +142,7 @@
 
                             <label for="audId">Auditor Id</label>
                             <input id="audId" class="form-control" type="number" ng-model="vm.auditor.id">
-                            <button class="btn btn-danger">Add Auditor</button>
+                            <button class="btn btn-danger" ng-click="vm.addValidator()">Add Auditor</button>
                         </form>
                     </div>
                 </div>
@@ -172,7 +172,7 @@
 
                             <label for="country">Country</label>
                             <input id="country" class="form-control" type="text" ng-model="vm.toVerify.address.country">
-                            <button class="btn btn-danger" ng-click="vm.verifyClient()">Add Client</button>
+                            <button class="btn btn-danger" ng-click="vm.verifyClient()">Varify Client</button>
                         </form>
                     </div>
                     <div class="col-md-6">

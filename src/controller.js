@@ -120,18 +120,33 @@
             var id_hash = web3.sha3(toHash);
             var desc = 'some hash';
             $log.log('Sending', vm.selectedAddr, id_hash, desc);
-            //vm.contract.changeArray(input, {from: web3.eth.accounts[0], gas:300000});
-            
-            
+        
                 vm.contract.addClient(vm.selectedAddr, id_hash, desc
                 ,
                 {   from: web3.eth.accounts[0], 
                     gas:1000000
                 });
-            
-
-       
         };
+
+        vm.addValidator = function(){
+            $log.log('Sending to', vm.selectedAddr, vm.validator);
+        
+                vm.contract.addValidator(vm.selectedAddr, vm.validator.id , vm.validator.name
+                ,
+                {   from: web3.eth.accounts[0], 
+                    gas:1000000
+                });
+        };
+
+        vm.addAuditor = function(){
+            $log.log('Sending to', vm.selectedAddr, vm.validator);
+        
+                vm.contract.addValidator(vm.selectedAddr, vm.auditor.id , vm.auditor.name
+                ,
+                {   from: web3.eth.accounts[0], 
+                    gas:1000000
+                });
+        }
 
         // can be 'latest' or 'pending'
         var filter = web3.eth.filter('latest');      
