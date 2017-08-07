@@ -51,7 +51,7 @@ contract IMS {
         
         if( validators[msg.sender].isRegistered == true){
             if( clients[input].isRegistered ){
-                feedBack(msg.sender, input, "NOT OK");
+                feedBack(msg.sender, input, "Already registered");
                 throw;
                 }else{
                     registeredAddresses.push(input);

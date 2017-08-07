@@ -85,16 +85,20 @@
 
         vm.addClient = function(){
             
-            var toHash = vm.client.fname+vm.client.sname+vm.client.address.street+vm.client.address.region+vm.client.address.city+vm.client.address.country;
+            var toHash =    vm.client.fname+
+                            vm.client.sname+
+                            vm.client.address.street+
+                            vm.client.address.region+
+                            vm.client.address.city+
+                            vm.client.address.country;
 
-            var id_hash =web3.sha3(toHash);
-            $log.log('Hash of string', id_hash);
-
+            var id_hash = web3.sha3(toHash);
             var desc = 'some hash';
+            $log.log('Sending', vm.selectedAddr, id_hash, desc);
             //vm.contract.changeArray(input, {from: web3.eth.accounts[0], gas:300000});
             
             
-                vm.contract.addClient(vm.contract.address, id_hash, desc
+                vm.contract.addClient(vm.selectedAddr, id_hash, desc
                 ,
                 {   from: web3.eth.accounts[0], 
                     gas:1000000
