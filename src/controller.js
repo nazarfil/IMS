@@ -93,13 +93,12 @@
 
             var hashed_info = web3.sha3(toHash);
 
-            var verified_info = vm.contract.verifyClient(
-                vm.selectedAddr, hashed_info, 
-                {
-                    from: web3.eth.accounts[0],
-                    gas: 1000000
-                }
+
+            $log.log('Verifying', vm.selectAddr, hashed_info);
+            var verified_info = vm.contract.verifyClient.call(
+                vm.selectedAddr, hashed_info
             )
+            $log.log('Verified cleint', verified_info);
 
         };
 
