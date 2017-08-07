@@ -49,6 +49,7 @@
     "extract-text-webpack-plugin": "^2.1.0",
     "fs": "0.0.1-security",
     "jquery": "^3.2.1",
+    "js-sha3": "^0.6.1",
     "raw-loader": "^0.5.1",
     "solc": "^0.4.10",
     "tether": "^1.4.0",

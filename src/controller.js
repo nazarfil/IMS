@@ -3,27 +3,6 @@
     'use strict';
     angular.module('app').controller('appController', function($log, $scope,$http, $q, $rootScope){
 
-        String.prototype.hashCode = function() {
-            var hash = 0, i, chr;
-            if (this.length === 0) return hash;
-            for (i = 0; i < this.length; i++) {
-                chr   = this.charCodeAt(i);
-                hash  = ((hash << 5) - hash) + chr;
-                hash |= 0; // Convert to 32bit integer
-            }
-            return hash;
-        };
-        
-        function decimalToHexString(number)
-        {
-            if (number < 0)
-            {
-                number = 0xFFFFFFFF + number + 1;
-            }
-
-            return number.toString(16).toUpperCase();
-        }
-
         $log.log('Controller initiated');
         var vm= this;
         //Def client
@@ -47,6 +26,7 @@
 
         //Web3 interface and netwokr connection
         var Web3 = require('web3');
+
         var web3 = new Web3();
         if(!web3.currentProvider)
             web3 = new Web3(new web3.providers.HttpProvider("http://localhost:8545"));
@@ -106,13 +86,15 @@
         vm.addClient = function(){
             
             var toHash = vm.client.fname+vm.client.sname+vm.client.address.street+vm.client.address.region+vm.client.address.city+vm.client.address.country;
-            var num_to_string = decimalToHexString(toHash.hashCode());
-            
-            $log.log('Hash of string', num_to_string);
+
+            var id_hash =web3.sha3(toHash);
+            $log.log('Hash of string', id_hash);
+
+            var desc = 'some hash';
             //vm.contract.changeArray(input, {from: web3.eth.accounts[0], gas:300000});
             
             
-                vm.contract.addIdentity(newAcc.acc, newAcc.fname, newAcc.lname, newAcc.addr, newAcc.pep
+                vm.contract.addClient(vm.contract.address, id_hash, desc
                 ,
                 {   from: web3.eth.accounts[0], 
                     gas:1000000
