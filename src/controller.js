@@ -9,6 +9,8 @@
         vm.client = {fname : 'Jo' , sname:'Do', address:{ street: 'Louise 116', city:'Brussels', country:'Belgium', region:1000}};
         vm.validator = {name:'Jo', id:10};
         vm.auditor = {name:'Jo', id:11};
+        //Def person to verify
+        vm.toVerify = {fname : 'Jo' , sname:'Do', address:{ street: 'Louise 116', city:'Brussels', country:'Belgium', region:1000}};
 
         vm.title = 'Ethereum app';
         //List indexes for active items
@@ -64,17 +66,41 @@
                 });
         };
 
+        //Automated running of contract
+        vm.addContract();
+
+        //
         vm.closeContract = function(){
             vm.activeIndex = -1;
             vm.activeIndex2 = -1;
         };
 
-        vm.checkAddress = function(acc_to_verify, idx){
-                vm.activeIndex2 = idx;
+        //Verifying if address is in mappign
+        vm.checkAddress = function(idx, acc_to_verify){
+                //vm.activeIndex2 = idx;
                 $log.log('Verifying', acc_to_verify);
-                vm.contractData.check = vm.contract.verifyIdentity.call(acc_to_verify);
-                var resp = vm.contract.getAddresses.call();
-                $log.log('Addreses', resp);
+                var isIn = vm.contract.verifyAddress.call(acc_to_verify);
+                $log.log('Verified ', isIn);
+        };
+
+        vm.verifyClient = function(){
+            var toHash =    vm.toVerify.fname+
+                            vm.toVerify.sname+
+                            vm.toVerify.address.street+
+                            vm.toVerify.address.region+
+                            vm.toVerify.address.city+
+                            vm.client.address.country;
+
+            var hashed_info = web3.sha3(toHash);
+
+            var verified_info = vm.contract.verifyClient(
+                vm.selectedAddr, hashed_info, 
+                {
+                    from: web3.eth.accounts[0],
+                    gas: 1000000
+                }
+            )
+
         };
 
         vm.selectAddr = function(index, addr ){

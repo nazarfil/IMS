@@ -32,20 +32,12 @@
                                 <tr ng-repeat="acc in vm.accounts">
                                     <td>{{$index}}</td>
                                     <td>{{acc}}</td>
-                                    <td><input type="checkbox" ng-click="vm.selectAddr($index, acc)" ng-checked="$index==vm.activeIndex"> </td>
-                                    <td><button class="btn btn-primary"> Verify</button> </td>
+                                    <td><input type="checkbox" style = "width: 30px; height: 30px;" ng-click="vm.selectAddr($index, acc)" ng-checked="$index==vm.activeIndex"> </td>
+                                    <td><button class="btn btn-primary" ng-click="vm.checkAddress($index, acc)"> OnChain?</button> </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-
-                    <div ng-if="$index == vm.activeIndex2">
-                             <dl class="dl-horizontal">
-                                 <dt> Response</dt>
-                                 <dd> {{vm.contractData.check}} </dd>
-                            </dl>
-                    </div>
-
                 </div>
                 <div class="col-md-6" class="main-context">
                     <h2>Contract Interaction</h2>
@@ -154,6 +146,39 @@
                         </form>
                     </div>
                 </div>
+        </div>
+
+        <div class="container-fluid">
+            <h2>Verifying an address</h2>
+            <hr>
+            <div class="row">
+                    <div class="col-md-6">
+                        <h3>Registration of a client</h3>
+                        <form class="form-group">
+                            <label for="fname">Name</label>
+                            <input id="fname" class="form-control" type="text" ng-model="vm.toVerify.fname">
+
+                            <label for="sname">Surname</label>
+                            <input id="sname" class="form-control" type="text" ng-model="vm.toVerify.sname">
+
+                            <label for="address">Address</label>
+                            <input id="address" class="form-control" type="text" ng-model="vm.toVerify.address.street">
+
+                            <label for="region">Region</label>
+                            <input id="region" class="form-control" type="number" ng-model="vm.toVerify.address.region">
+                        
+                            <label for="city">City</label>
+                            <input id="city" class="form-control" type="text" ng-model="vm.toVerify.address.city">
+
+                            <label for="country">Country</label>
+                            <input id="country" class="form-control" type="text" ng-model="vm.toVerify.address.country">
+                            <button class="btn btn-danger" ng-click="vm.verifyClient()">Add Client</button>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Dom soemthing else</h3>
+                    </div>
+            </div>
         </div>
      </div>
     </body>
