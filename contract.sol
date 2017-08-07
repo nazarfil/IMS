@@ -20,13 +20,13 @@ contract IMS {
     
     struct idCLient{
         bool isRegistered;
-        bytes32 info_hash;
+        string info_hash;
         string description;
     }
     
     struct idAuditor{
         bool isResgistered;
-        string name;
+        uint auditorID;
         string entity;
     }
     
@@ -35,10 +35,11 @@ contract IMS {
     mapping (address => idValidator) public validators;
 
     address public toVerify;
-    string public contractName;
     address[] public registeredAddresses;
     string public registeredString;
 
+    
+    string public contractName;
     function IMS(){
         contractName = "Identity Management Tool";
         validators[msg.sender] = idValidator(true, 8, "GenesisValidator");
@@ -46,7 +47,7 @@ contract IMS {
     }
     
     
-    function addIdentity(address input, bytes32 info_hash, string description) payable{
+    function addClient(address input, string info_hash, string description) payable{
         
         if( validators[msg.sender].isRegistered == true){
             if( clients[input].isRegistered ){
@@ -62,7 +63,7 @@ contract IMS {
             }
     }
 
-    function verifyIdentity(address toVerify) returns (bool){
+    function verifyAddress(address toVerify) returns (bool){
             if( clients[toVerify].isRegistered) 
             {
                 return true;
@@ -76,7 +77,7 @@ contract IMS {
         stringsFeedBack(msg.sender, adr);
     }
 
-    function getAddresses() returns( address [] ){
+    function getRegAddrs() returns( address [] ){
         return registeredAddresses;
     }
 }

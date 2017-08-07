@@ -1,11 +1,12 @@
 body{
-    background-color: #888888;
+    background-color: #fff;
 }
+
 
 .main-context{
     padding: 0px 20px 0px 0px;
     background-color: #000;
-    color: #fff;
+    color: #bbb;
     margin: 10px 10px 10px 10px;
     min-height: 400px;
 }
