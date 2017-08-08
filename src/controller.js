@@ -36,6 +36,14 @@
         $log.log('Web 3 loaded', web3.eth.accounts);
         vm.accounts = web3.eth.accounts;
 
+
+        //Estiamtes contracts gas
+        vm.contract_gas_needed = web3.eth.estimateGas({
+            data: binaryContract
+        });
+        
+
+        //Adds contract to the chain
         vm.addContract = function(){
 
            // var compiledCode = require('../contract.js');
@@ -53,6 +61,7 @@
 
         };
 
+        //Call contract details /addr from blockchain
         vm.showContract = function (){
                 var abi = JSON.parse(vm.minedContract.abi);
                 var addr = vm.minedContract.address
@@ -83,6 +92,7 @@
                 $log.log('Verified ', isIn);
         };
 
+        //Verfiying if a client is into register based in its info
         vm.verifyClient = function(){
             var toHash =    vm.toVerify.fname+
                             vm.toVerify.sname+
@@ -102,12 +112,14 @@
 
         };
 
+        //Sleecting an address from the list
         vm.selectAddr = function(index, addr ){
             vm.activeIndex = index;
             vm.selectedAddr = addr;
 
         };
 
+        //Adds new client on a chain based on its information
         vm.addClient = function(){
             
             var toHash =    vm.client.fname+
@@ -119,8 +131,7 @@
 
             var id_hash = web3.sha3(toHash);
             var desc = 'some hash';
-            $log.log('Sending', vm.selectedAddr, id_hash, desc);
-        
+            //Adding new client
                 vm.contract.addClient(vm.selectedAddr, id_hash, desc
                 ,
                 {   from: web3.eth.accounts[0], 
@@ -128,6 +139,37 @@
                 });
         };
 
+        var verifySignature = function(){
+            //UTIL methods
+            //PROBABLY DOESN4T WORK ON TESTRPC
+            //Prefixed msg
+
+            const hash_msg = new Buffer(id_hash)
+            var msg = id_hash;
+            const prefix = new Buffer("\x19Ethereum Signed Message:\n32");
+            const prefixedMsg = web3.sha3(
+                Buffer.concat([prefix, new Buffer(String(msg.length)), hash_msg])
+            );
+
+
+            //EC signature of the msg
+            var signature = web3.eth.sign(vm.selectedAddr, '0x'+msg);
+            var sig = signature;
+            var sig = sig.substr(2, sig.length);
+            let r = '0x' + sig.substr(0, 64);
+            let s = '0x' + sig.substr(64, 64);
+            let v = web3.toDecimal(sig.substr(128, 2)) + 27;
+            $log.log('Id Hash', msg);
+            //$log.log('V-R-S', v,r,s);
+            $log.log('Sending', vm.selectedAddr, msg);
+            
+            
+            
+            var verifySignature = vm.contract.verifySignature.call(vm.selectedAddr, msg, v, r, s);
+            $log.log('Is signature good?', verifySignature);
+        };
+        
+        //Adds a validator to the chain
         vm.addValidator = function(){
             $log.log('Sending to', vm.selectedAddr, vm.validator);
         
@@ -138,6 +180,8 @@
                 });
         };
 
+
+        //Adds an auditor to the chain
         vm.addAuditor = function(){
             $log.log('Sending to', vm.selectedAddr, vm.validator);
         
@@ -148,6 +192,7 @@
                 });
         }
 
+        //Signs a message with some address
         // can be 'latest' or 'pending'
         var filter = web3.eth.filter('latest');      
         // watch for changes

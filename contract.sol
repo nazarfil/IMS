@@ -54,7 +54,7 @@ contract IMS {
                 }else{
                     registeredAddresses.push(input);
                     clients[input] = idCLient(true, info_hash, description);
-                    feedBack(msg.sender, input, "OK");
+                    feedBack(msg.sender, input, "Cleint was added");
                 }
             }else{
                throw;
@@ -70,7 +70,7 @@ contract IMS {
                 }else{
                     registeredAddresses.push(input);
                     validators[input] = idValidator(true, id, name);
-                    feedBack(msg.sender, input, "OK");
+                    feedBack(msg.sender, input, "Validator was added");
                 }
             }else{
                throw;
@@ -86,7 +86,7 @@ contract IMS {
                 }else{
                     registeredAddresses.push(input);
                     auditors[input] = idAuditor(true, id, name);
-                    feedBack(msg.sender, input, "OK");
+                    feedBack(msg.sender, input, "Auditor was added");
                 }
             }else{
                throw;
@@ -121,13 +121,42 @@ contract IMS {
 
     function verifyClient(address toVerify, string hashed_info) returns(bool){
         if( clients[toVerify].isRegistered){
-            if (compare(hashed_info, clients[toVerify].info_hash) ==0){
+            if (compare(hashed_info, clients[toVerify].info_hash) == 0){
                 return true;
             }
 
         }
         
     }
+    
+    function changeClientData(address to_change, string new_hash ) payable{
+        if( clients[toVerify].isRegistered){
+            //Verify signature 
+            clients[toVerify].info_hash;
+        }
+    }
+
+    function verifySignature(address addr_to_verify, bytes32 hash_msg, uint8 v, bytes32 r, bytes32 s) returns(address){
+        /*
+        bytes32  r;
+        bytes32  s;  
+        bytes32 hash_b32;
+        
+        assembly{
+            r:= mload(add(r_str, 32))
+            s:= mload(add(s_str, 32))
+            hash_b32:= mload(add(hash_str, 32))
+        }
+        
+        address adr_sig = ecrecover(hash_b32, v,r,s);
+        */
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 prefixedHash = sha3(prefix, hash_msg);
+        address addr_sig = ecrecover(hash_msg, v, r, s);
+        return addr_sig;
+        //return (addr_to_verify == addr_sig);
+    }
+
     function getRegAddrs() returns( address [] ){
         return registeredAddresses;
     }
