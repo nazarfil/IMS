@@ -46,6 +46,7 @@
     "angular": "^1.6.3",
     "angular-bootstrap": "*",
     "bootstrap": "*",
+    "ethereumjs-util": "^5.1.2",
     "ethjs-util": "^0.1.4",
     "extract-text-webpack-plugin": "^2.1.0",
     "fs": "0.0.1-security",

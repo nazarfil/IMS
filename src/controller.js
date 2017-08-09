@@ -28,6 +28,7 @@
 
         //Web3 interface and netwokr connection
         var Web3 = require('web3');
+        var util = require('ethereumjs-util');
 
         var web3 = new Web3();
         if(!web3.currentProvider)
@@ -139,33 +140,39 @@
                 });
         };
 
-        var verifySignature = function(){
-            //UTIL methods
-            //PROBABLY DOESN4T WORK ON TESTRPC
-            //Prefixed msg
-
-            const hash_msg = new Buffer(id_hash)
-            var msg = id_hash;
-            const prefix = new Buffer("\x19Ethereum Signed Message:\n32");
-            const prefixedMsg = web3.sha3(
-                Buffer.concat([prefix, new Buffer(String(msg.length)), hash_msg])
-            );
-
-
+        vm.verifySignature = function(){
+            var msg = 'eb27730e942a7c';
+            var msgBuffer = new Buffer(msg, 'hex');
             //EC signature of the msg
-            var signature = web3.eth.sign(vm.selectedAddr, '0x'+msg);
-            var sig = signature;
-            var sig = sig.substr(2, sig.length);
-            let r = '0x' + sig.substr(0, 64);
-            let s = '0x' + sig.substr(64, 64);
-            let v = web3.toDecimal(sig.substr(128, 2)) + 27;
-            $log.log('Id Hash', msg);
-            //$log.log('V-R-S', v,r,s);
-            $log.log('Sending', vm.selectedAddr, msg);
-            
-            
-            
+            var signature = web3.eth.sign(vm.selectedAddr,'0x'+msg);
+            signature = signature.split('x')[1];
+            var r = new Buffer(signature.substring(0, 64), 'hex')
+            var s = new Buffer(signature.substring(64, 128), 'hex')
+            var v = (parseInt(signature.substring(128, 130)) + 27).toString();
+
             var verifySignature = vm.contract.verifySignature.call(vm.selectedAddr, msg, v, r, s);
+            //$log.log('V-R-S', v,r,s);
+            $log.log('Sending', vm.selectedAddr, msgBuffer);
+            $log.log('Msg', msgBuffer);
+            $log.log('r', r);
+            $log.log('s', s);
+            $log.log('v', v,(parseInt(signature.substring(128, 130)) + 27).toString());
+            
+ msg = new Buffer('hello');
+const sig = web3.eth.sign(web3.eth.accounts[0], '0x' + msg.toString('hex'));
+const res = util.fromRpcSig(sig);
+
+const prefix = new Buffer("\x19Ethereum Signed Message:\n");
+const prefixedMsg = util.sha3(
+  Buffer.concat([prefix, new Buffer(String(msg.length)), msg])
+);
+
+const pubKey  = util.ecrecover(prefixedMsg, res.v, res.r, res.s);
+const addrBuf = util.pubToAddress(pubKey);
+const addr    = util.bufferToHex(addrBuf);
+
+console.log(web3.eth.accounts[0],  addr);
+            //var verifySignature = vm.contract.verifySignature.call(msg, v, r, s);
             $log.log('Is signature good?', verifySignature);
         };
         

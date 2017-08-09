@@ -1,6 +1,7 @@
 pragma solidity ^0.4.6;
 
 contract IMS {
+    
     event feedBack(
         address indexed sender,
         address indexed data,
@@ -124,9 +125,7 @@ contract IMS {
             if (compare(hashed_info, clients[toVerify].info_hash) == 0){
                 return true;
             }
-
-        }
-        
+        }        
     }
     
     function changeClientData(address to_change, string new_hash ) payable{
@@ -136,7 +135,7 @@ contract IMS {
         }
     }
 
-    function verifySignature(address addr_to_verify, bytes32 hash_msg, uint8 v, bytes32 r, bytes32 s) returns(address){
+    function verifySignature( address to_compare, bytes32 hash_msg, uint8 v, bytes32 r, bytes32 s) returns(bool){
         /*
         bytes32  r;
         bytes32  s;  
@@ -149,14 +148,16 @@ contract IMS {
         }
         
         address adr_sig = ecrecover(hash_b32, v,r,s);
-        */
+        
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         bytes32 prefixedHash = sha3(prefix, hash_msg);
+        */
         address addr_sig = ecrecover(hash_msg, v, r, s);
-        return addr_sig;
+        return addr_sig == to_compare;
         //return (addr_to_verify == addr_sig);
     }
 
+    
     function getRegAddrs() returns( address [] ){
         return registeredAddresses;
     }
