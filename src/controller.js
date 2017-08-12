@@ -27,14 +27,11 @@
         vm.contract = {};
 
         //Web3 interface and netwokr connection
-        var Web3 = require('web3');
         var util = require('ethereumjs-util');
-
+        var Web3 = require('web3');
         var web3 = new Web3();
         if(!web3.currentProvider)
             web3 = new Web3(new web3.providers.HttpProvider("http://localhost:8545"));
-            
-        $log.log('Web 3 loaded', web3.eth.accounts);
         vm.accounts = web3.eth.accounts;
 
 
@@ -46,13 +43,11 @@
 
         //Adds contract to the chain
         vm.addContract = function(){
-
            // var compiledCode = require('../contract.js');
             web3.eth.sendTransaction({from:web3.eth.accounts[0], data: binaryContract, gas: '4700000'}, function(err, transactionHash) {
                 if (!err)
                 console.log(transactionHash);        
                 var receipt = web3.eth.getTransactionReceipt(transactionHash);
-                console.log("Contract Receipt" , receipt);
                 console.log("Contract address" , receipt.contractAddress);
                 vm.minedContract.address = receipt.contractAddress;
                 $log.log(vm.minedContract);
