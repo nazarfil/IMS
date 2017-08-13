@@ -11,5 +11,5 @@ RUN ls -l
 RUN mkdir /node
 ADD . /node
 
-ENTRYPOINT ["geth"]
+ENTRYPOINT []
 
