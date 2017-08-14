@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-docker run enode/private init /node/Genesis.json
+geth init /node/Genesis.json

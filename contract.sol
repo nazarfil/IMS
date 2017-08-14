@@ -129,13 +129,13 @@ contract IMS {
     }
     
     function changeClientData(address to_change, string new_hash ) payable{
-        if( clients[toVerify].isRegistered){
-            //Verify signature 
+        if( clients[to_change].isRegistered && (validators[msg.sender].isRegistered || (msg.sender==to_change){
+            //Change client's data
             clients[toVerify].info_hash;
         }
     }
 
-    function verifySignature( address to_compare, bytes32 hash_msg, uint8 v, bytes32 r, bytes32 s) returns(bool){
+    function verifySignature_bytes( address to_compare, bytes32 hash_msg, uint8 v, bytes32 r, bytes32 s) returns(address){
         /*
         bytes32  r;
         bytes32  s;  
@@ -152,12 +152,32 @@ contract IMS {
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         bytes32 prefixedHash = sha3(prefix, hash_msg);
         */
-        address addr_sig = ecrecover(hash_msg, v, r, s);
-        return addr_sig == to_compare;
+        bytes32 prefixedHash = sha3(hash_msg);
+        address addr_sig = ecrecover(prefixedHash, v, r, s);
+        return addr_sig;// == to_compare;
         //return (addr_to_verify == addr_sig);
     }
 
-    
+    function verifySignature( address to_compare, string hash_str, uint8 v, string r, string s) returns(address){
+        
+        bytes32  r;
+        bytes32  s;  
+        bytes32 hash_b32;
+        
+        assembly{
+            r:= mload(add(r_str, 32))
+            s:= mload(add(s_str, 32))
+            hash_b32:= mload(add(hash_str, 32))
+        }
+               
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 prefixedHash = sha3(prefix, hash_b32);
+        
+        address addr_sig = ecrecover(prefixedHash, v, r, s);
+        return addr_sig == to_compare;
+        
+    }
+
     function getRegAddrs() returns( address [] ){
         return registeredAddresses;
     }
