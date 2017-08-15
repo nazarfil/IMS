@@ -105,7 +105,6 @@ contract IMS {
         bytes memory b = bytes(_b);
         uint minLength = a.length;
         if (b.length < minLength) minLength = b.length;
-        //@todo unroll the loop into increments of 32 and do full 32 byte comparisons
         for (uint i = 0; i < minLength; i ++)
             if (a[i] < b[i])
                 return -1;
@@ -162,13 +161,13 @@ contract IMS {
         
     }
 
-    function addInvestigation(address to_investigate){
+    function addInvestigation(address to_investigate) payable{
         if(validators[msg.sender].isRegistered && clients[to_investigate].isRegistered){
             investigations[msg.sender].push(to_investigate);
         }
     }
 
-    function endInvestigation(address to_delete){
+    function endInvestigation(address to_delete) payable{
         if(validators[msg.sender].isRegistered && clients[to_delete].isRegistered){
             for(uint256 i =0; i< investigations[msg.sender].length; i++){
                 if(investigations[msg.sender][i] == to_delete){

@@ -11,5 +11,9 @@ RUN ls -l
 RUN mkdir /node
 ADD . /node
 
+EXPOSE 8545
+EXPOSE 30303
+EXPOSE 30303/udp
+
 ENTRYPOINT []
 
