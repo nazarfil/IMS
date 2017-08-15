@@ -11,3 +11,10 @@ body{
     min-height: 400px;
 }
 
+.over-flow{
+    max-height: 100px;
+    overflow:hidden;
+}
+.over-flow:hover{
+    overflow:scroll;
+}

@@ -5,24 +5,29 @@
 
         $log.log('Controller initiated');
         var vm= this;
+
+        //List indexes for active items
+        vm.activeIndex = -1;
+        vm.activeIndex2 = -1;
+        
         //Def client
         vm.client = {fname : 'Jo' , sname:'Do', address:{ street: 'Louise 116', city:'Brussels', country:'Belgium', region:1000}};
         vm.validator = {name:'Jo', id:10};
         vm.auditor = {name:'Jo', id:11};
+        
         //Def person to verify
         vm.toVerify = {fname : 'Jo' , sname:'Do', address:{ street: 'Louise 116', city:'Brussels', country:'Belgium', region:1000}};
-
         vm.title = 'Ethereum app';
-        //List indexes for active items
-        vm.activeIndex = -1;
-        vm.activeIndex2 = -1;
-
+        
         //Contract to mine
         vm.minedContract = {address: '', abi:abiContract, desc:'Mined Contract'}
-
-        //Arra of all accounts on the network
+        //Arra of all accounts on the node
         vm.accounts = [];
-        vm.selectedAddr = '';
+        //Address on which we work: include, change etc
+        vm.target_adr = '';
+        //main address, sending transaction 
+        vm.main_adr ='';
+
         //Extracted Contract form the chain
         vm.contract = {};
 
@@ -33,7 +38,7 @@
         if(!web3.currentProvider)
             web3 = new Web3(new web3.providers.HttpProvider("http://localhost:8545"));
         vm.accounts = web3.eth.accounts;
-
+        vm.main_adr = web3.eth.accounts[0];
 
         //Estiamtes contracts gas
         vm.contract_gas_needed = web3.eth.estimateGas({
@@ -44,16 +49,20 @@
         //Adds contract to the chain
         vm.addContract = function(){
            // var compiledCode = require('../contract.js');
-            web3.eth.sendTransaction({from:web3.eth.accounts[0], data: binaryContract, gas: '4700000'}, function(err, transactionHash) {
-                if (!err)      
-                var receipt = web3.eth.getTransactionReceipt(transactionHash);
-                console.log("Contract address" , receipt.contractAddress);
-                vm.minedContract.address = receipt.contractAddress;
-                $log.log(vm.minedContract);
-                $scope.$apply();
+            web3.eth.sendTransaction( 
+                    {   from: web3.eth.accounts[0], 
+                        data: binaryContract, 
+                        gas: '4700000'}, 
+                    function(err, transactionHash) {
+                if (!err){
+                    var receipt = web3.eth.getTransactionReceipt(transactionHash);
+                    console.log("Contract address" , receipt);
+                    vm.minedContract.address = receipt.contractAddress;
+                    vm.minedContract.abi = abiContract;
+                    $log.log(vm.minedContract);
+                    $scope.$apply();
+                }     
             });
-
-
         };
 
         //Call contract details /addr from blockchain
@@ -70,15 +79,11 @@
                 });
         };
 
-        //Automated running of contract
-        vm.addContract();
-
-        //
-        vm.closeContract = function(){
-            vm.activeIndex = -1;
-            vm.activeIndex2 = -1;
-        };
-
+        vm.changeContract = function(adr, abi){
+            $log.log('chng', adr);
+            vm.minedContract.abi = abi;
+            vm.minedContract.address = adr;
+        }
         //Verifying if address is in mappign
         vm.checkAddress = function(idx, acc_to_verify){
                 //vm.activeIndex2 = idx;
@@ -101,7 +106,7 @@
 
             $log.log('Verifying', vm.selectAddr, hashed_info);
             var verified_info = vm.contract.verifyClient.call(
-                vm.selectedAddr, hashed_info
+                vm.target_adr, hashed_info
             )
             $log.log('Verified cleint', verified_info);
 
@@ -110,7 +115,7 @@
         //Sleecting an address from the list
         vm.selectAddr = function(index, addr ){
             vm.activeIndex = index;
-            vm.selectedAddr = addr;
+            vm.target_adr = addr;
 
         };
 
@@ -127,9 +132,9 @@
             var id_hash = web3.sha3(toHash);
             var desc = 'some hash';
             //Adding new client
-                vm.contract.addClient(vm.selectedAddr, id_hash, desc
+                vm.contract.addClient(vm.target_adr, id_hash, desc
                 ,
-                {   from: web3.eth.accounts[0], 
+                {   from: vm.main_adr, 
                     gas:1000000
                 });
         };
@@ -139,22 +144,22 @@
             var msg = new Buffer('hello');
             //var msgBuffer = new Buffer(msg, 'hex');
             //EC signature of the msg
-            var signature = web3.eth.sign(vm.selectedAddr,'0x'+ msg.toString('hex'));
+            var signature = web3.eth.sign(vm.target_adr,'0x'+ msg.toString('hex'));
             signature = signature.split('x')[1];
             var r = new Buffer(signature.substring(0, 64), 'hex')
             var s = new Buffer(signature.substring(64, 128), 'hex')
             var v = (parseInt(signature.substring(128, 130)) + 27).toString();
 
-            var verifySignature = vm.contract.verifySignature.call(vm.selectedAddr, msg, v, r, s);
+            var verifySignature = vm.contract.verifySignature.call(vm.target_adr, msg, v, r, s);
             //$log.log('V-R-S', v,r,s);
-            //$log.log('Sending', vm.selectedAddr, msgBuffer);
+            //$log.log('Sending', vm.target_adr, msgBuffer);
            // $log.log('Msg', msgBuffer);
             $log.log('r', r);
             $log.log('s', s);
             $log.log('v', v,(parseInt(signature.substring(128, 130)) + 27).toString());
             
             var msg = new Buffer('hello');
-            const sig = web3.eth.sign(vm.selectedAddr, '0x' + msg.toString('hex'));
+            const sig = web3.eth.sign(vm.target_adr, '0x' + msg.toString('hex'));
             const res = util.fromRpcSig(sig);
 
             const prefix = new Buffer("\x19Ethereum Signed Message:\n");
@@ -167,19 +172,19 @@
             const addr    = util.bufferToHex(addrBuf);
 
             const pk = util.bufferToHex(pubKey)
-            console.log(vm.selectedAddr,  addr,'Pubkey '+pk);
-            //var verifySignature= vm.contract.verifySignature.call(vm.selectedAddr, prefixedMsg , res.v, res.r, res.s)
+            console.log(vm.target_adr,  addr,'Pubkey '+pk);
+            //var verifySignature= vm.contract.verifySignature.call(vm.target_adr, prefixedMsg , res.v, res.r, res.s)
             //var verifySignature = vm.contract.verifySignature.call(msg, v, r, s);
             $log.log('Is signature good?', verifySignature);
         };
         
         //Adds a validator to the chain
         vm.addValidator = function(){
-            $log.log('Sending to', vm.selectedAddr, vm.validator);
+            $log.log('Sending to', vm.target_adr, vm.validator);
         
-                vm.contract.addValidator(vm.selectedAddr, vm.validator.id , vm.validator.name
+                vm.contract.addValidator(vm.target_adr, vm.validator.id , vm.validator.name
                 ,
-                {   from: web3.eth.accounts[0], 
+                {   from: vm.main_adr, 
                     gas:1000000
                 });
         };
@@ -187,11 +192,11 @@
 
         //Adds an auditor to the chain
         vm.addAuditor = function(){
-            $log.log('Sending to', vm.selectedAddr, vm.validator);
+            $log.log('Sending to', vm.target_adr, vm.validator);
         
-                vm.contract.addValidator(vm.selectedAddr, vm.auditor.id , vm.auditor.name
+                vm.contract.addValidator(vm.target_adr, vm.auditor.id , vm.auditor.name
                 ,
-                {   from: web3.eth.accounts[0], 
+                {   from: vm.main_adr, 
                     gas:1000000
                 });
         }
@@ -199,7 +204,7 @@
         //Signs a message with some address
         // can be 'latest' or 'pending'
         vm.changeClientData = function(){
-            vm.contract.changeClientData()vm.
+            vm.contract.changeClientData();
         }
 
         var filter = web3.eth.filter('latest');      
