@@ -1,28 +1,39 @@
 # IMS
-## Web3 library builds incorrectly with Webpack ##
-### Error ###
-https://github.com/ethereum/web3.js/issues/555
-Missing semicolon on build
+## Requirements ##
+node, npm, docker
+## Run network ##
+### Run testing network ###
+Pull docker container with TestRPC and run it
 ```
-  if (options.value > 0) {
-     var constructorAbi = abi.filter(function (json) {
-        return json.type === 'constructor' && json.inputs.length === args.length;
-          })[0] || {};
-  if (!constructorAbi.payable) {
-     throw new Error('Cannot send value to non-payable constructor');
-     }
-  }
+    docker pull harshjv/testrpc
+    docker run -d -p 8545:8545 harshjv/testrpc
 ```
-### Workaround  ###
+### Start Docker container ###
+To start as a passive Etheruem client
+```
+    cd docker/node_1
+    docker-compose build
+    docker run -it -p 8545:8545 -p 30303:30303 enode/gen bash
+```
+To start as a passive Etheruem client
+```
+    cd docker/miner
+    docker-compose build
+    docker run -it -p 8545:8545 -p 30303:30303 enode/miner bash
+```
+Once in a container iitlize the bloackchain
+```
+    ./node/init_network.sH
+```
+Create an account and verify it is created
+```
+    geth account new
+    geth accoutn list
+```
+Run the client on the predefined network
+```
+    ./node/testNetworksH
+```
+## Run application  ##
 Add semicolon to built bundle.js
-```
-   if (options.value > 0) {
-      var constructorAbi = abi.filter(function (json) {
-         return json.type === 'constructor' && json.inputs.length === args.length;
-            })[0] || ; {};
 
-           if (!constructorAbi.payable) {
-              throw new Error('Cannot send value to non-payable constructor');
-            }
-        }
-```
