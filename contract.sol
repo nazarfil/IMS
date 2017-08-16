@@ -193,7 +193,7 @@ contract IMS {
             auditors[msg.sender].current_audit = to_investigate;
             auditFeedback(msg.sender, to_investigate, "Added investigation" );
         }else 
-            auditFeedback(msg.sender, to_investigate, "not registered");
+            throw;
     }
 
     function endInvestigation(address to_delete) payable{
@@ -201,9 +201,8 @@ contract IMS {
             auditors[msg.sender].current_audit = msg.sender;
             auditFeedback(msg.sender, to_delete, "Deleted request" );
         }else
-            auditFeedback(msg.sender, to_delete, "Not goOD" );
+            throw;
     }
-
     function getInvestigatedAdr(address aud_adr) returns(address){
         return auditors[aud_adr].current_audit;
     }

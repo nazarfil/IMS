@@ -196,7 +196,7 @@
             vm.signatureStatus = addr;
             console.log(vm.target_adr,  addr);
             var verifySignature = vm.contract.verifySignature.call(prefixedMsg , res.v, res.r, res.s);
-            var verifySignatureAddr = vm.contract.verifySignature.call(vm.target_adr, prefixedMsg , res.v, res.r, res.s);
+            //var verifySignatureAddr = vm.contract.verifySignature.call(vm.target_adr, prefixedMsg , res.v, res.r, res.s);
             $log.log('Signature returned', verifySignature);
             //var verifySignature = vm.contract.verifySignature.call(msg, v, r, s);
             //$log.log('Is signature good?', verifySignature);
@@ -231,13 +231,10 @@
             var msg = new Buffer(vm.hashedInfo);
             var sig = vm.signedHash;
             const res = util.fromRpcSig(sig);
-
             const prefix = new Buffer("\x19Ethereum Signed Message:\n");
             const prefixedMsg = util.sha3(
             Buffer.concat([prefix, new Buffer(String(msg.length)), msg])
-            );
-
-            
+            );      
             vm.contract.changeClientData(vm.target_adr, vm.hashedInfo, {
                 from: vm.main_adr,
                 gas: 1000000
