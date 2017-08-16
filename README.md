@@ -2,6 +2,7 @@
 ## Requirements ##
 node, npm, docker
 ## Run network ##
+cli commands to start the network
 ### Run testing network ###
 Pull docker container with TestRPC and run it
 ```
@@ -34,6 +35,21 @@ Run the client on the predefined network
 ```
     ./node/testNetworksH
 ```
+## Compile the contract ##
+cli commands to compile the code
+From the source folder run
+```
+    ./compile_sol.sh
+```
+Compiles the code and parses it ti js files
 ## Run application  ##
-Add semicolon to built bundle.js
+cli commands to run the applicaiton
+From the source folder run 
+
+```
+    npm install
+    webpack
+```
+Creates a bundle.js files with the dependencies to be included to the application
+Open the index.html file in a browser
 
