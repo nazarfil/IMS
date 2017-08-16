@@ -27,3 +27,7 @@ section h2{
 .margined-btn{
     margin: 2 3 2 3;
 }
+
+.redcase{
+    background-color:red;
+}

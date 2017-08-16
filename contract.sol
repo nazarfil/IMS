@@ -26,16 +26,16 @@ contract IMS {
     }
     
     struct idAuditor{
-        bool isResgistered;
+        bool isRegistered;
         uint auditorID;
         string entity;
+        address current_audit;
     }
     
     mapping (address => idCLient) public clients;
     mapping (address => idAuditor) public auditors;
     mapping (address => idValidator) public validators;
     
-    mapping(address => address[]) public investigations;
     address public to_verify;
     address[] public registeredAddresses;
 
@@ -65,7 +65,7 @@ contract IMS {
     function addValidator(address input, uint id, string name) payable{
         
         if( validators[msg.sender].isRegistered == true){
-            if( clients[input].isRegistered ){
+            if( validators[input].isRegistered ){
                 feedBack(msg.sender, input, "Already registered");
                 throw;
                 }else{
@@ -81,16 +81,16 @@ contract IMS {
     function addAuditor(address input, uint id, string name) payable{
         
         if( validators[msg.sender].isRegistered == true){
-            if( clients[input].isRegistered ){
+            if( auditors[input].isRegistered ){
                 feedBack(msg.sender, input, "Already registered");
-                throw;
+                //throw;
                 }else{
                     registeredAddresses.push(input);
-                    auditors[input] = idAuditor(true, id, name);
+                    auditors[input] = idAuditor(true, id, name, msg.sender);
                     feedBack(msg.sender, input, "Auditor was added");
                 }
             }else{
-               throw;
+               //throw;
             }
     }
 
@@ -189,26 +189,23 @@ contract IMS {
     }
 
     function addInvestigation(address to_investigate) payable{
-        if(validators[msg.sender].isRegistered && clients[to_investigate].isRegistered){
-            investigations[msg.sender].push(to_investigate);
+        if(auditors[msg.sender].isRegistered && clients[to_investigate].isRegistered){
+            auditors[msg.sender].current_audit = to_investigate;
             auditFeedback(msg.sender, to_investigate, "Added investigation" );
-        }
+        }else 
+            auditFeedback(msg.sender, to_investigate, "not registered");
     }
 
     function endInvestigation(address to_delete) payable{
-        if(validators[msg.sender].isRegistered && clients[to_delete].isRegistered){
-            for(uint256 i =0; i< investigations[msg.sender].length; i++){
-                if(investigations[msg.sender][i] == to_delete){
-                    investigations[msg.sender][i]=investigations[msg.sender][investigations[msg.sender].length];
-                    delete investigations[msg.sender][investigations[msg.sender].length];
-                    auditFeedback(msg.sender, to_delete, "Deleted_investigation" );
-                }
-
-            }
-        }
+        if(auditors[msg.sender].isRegistered && (msg.sender ==to_delete)){
+            auditors[msg.sender].current_audit = msg.sender;
+            auditFeedback(msg.sender, to_delete, "Deleted request" );
+        }else
+            auditFeedback(msg.sender, to_delete, "Not goOD" );
     }
-    function getInvestigations(address auditor) returns(address[]){
-        return investigations[auditor];
+
+    function getInvestigatedAdr(address aud_adr) returns(address){
+        return auditors[aud_adr].current_audit;
     }
     function getRegAddrs() returns( address [] ){
         return registeredAddresses;

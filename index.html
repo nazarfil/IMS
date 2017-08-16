@@ -28,14 +28,16 @@
                                         <td>Accounts</td>
                                         <td>Select</td>
                                         <td>Verify</td>
+                                        <td>Main</td>
                                     </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="acc in vm.accounts">
+                                <tr ng-repeat="acc in vm.accounts" ng-class="{'redcase': $index==vm.activeIndex2}">
                                     <td>{{$index}}</td>
                                     <td>{{acc}}</td>
                                     <td><input type="checkbox" style = "width: 30px; height: 30px;" ng-click="vm.selectAddr($index, acc)" ng-checked="$index==vm.activeIndex"> </td>
                                     <td><button class="btn btn-primary" ng-click="vm.checkAddress($index, acc)"> OnChain?</button> </td>
+                                    <td><button class="btn btn-primary" ng-click="vm.changeMain($index, acc)"> Main</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -137,7 +139,7 @@
 
                             <label for="audId">Auditor Id</label>
                             <input id="audId" class="form-control" type="number" ng-model="vm.auditor.id">
-                            <button class="btn btn-danger" ng-click="vm.addValidator()">Add Auditor</button>
+                            <button class="btn btn-danger" ng-click="vm.addAuditor()">Add Auditor</button>
                         </form>
                     </div>
                 </div>
@@ -250,13 +252,11 @@
                      <h3>Show requests</h3>
                      <div>
                          <div class="group-form">
-                             <button class="btn btn-primary" ng-class="vm.loadAudtors">
-                                Load Auditors
+                             <button class="btn btn-primary" ng-click="vm.showInvestigation();">
+                                Show Target Investigation
                              </button>
                          </div>
-                            <ul class="list-group">
-                                <li class="list-group-item"> Az </li>
-                            </ul>
+                         <h3>{{vm.investigationTarget}}</h3>
                      </div>
                     </div>
             </div>

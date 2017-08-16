@@ -8,7 +8,8 @@
 
         //List indexes for active items
         vm.activeIndex = -1;
-        vm.activeIndex2 = -1;
+        vm.activeIndex2 = 0;
+        vm.activeIndex3 =-1;
         //Def client
         vm.client = {fname : 'Jo' , sname:'Do', address:{ street: 'Louise 116', city:'Brussels', country:'Belgium', region:1000}};
         vm.validator = {name:'Jo', id:10};
@@ -32,7 +33,9 @@
         vm.hashedInfo = "";
         vm.signedHash = "0x0";
         vm.signatureStatus='Unknown';
-
+        //
+        vm.investigations = [];
+        vm.investigationTarget = '';
         //Web3 interface and netwokr connection
         var util = require('ethereumjs-util');
         var Web3 = require('web3');
@@ -50,7 +53,10 @@
         };
 
         vm.contract_gas_needed = makeGasEstimation(binaryContract);
-        
+        vm.changeMain = function(idx, acc){
+            vm.main_adr = acc;
+            vm.activeIndex2 = idx;
+        }
 
         //Adds contract to the chain
         vm.addContract = function(){
@@ -203,7 +209,7 @@
                 vm.contract.addValidator(vm.target_adr, vm.validator.id , vm.validator.name
                 ,
                 {   from: vm.main_adr, 
-                    gas:100000
+                    gas:1000000
                 });
         };
 
@@ -212,10 +218,10 @@
         vm.addAuditor = function(){
             $log.log('Sending to', vm.target_adr, vm.validator);
         
-                vm.contract.addValidator(vm.target_adr, vm.auditor.id , vm.auditor.name
+                vm.contract.addAuditor(vm.target_adr, vm.auditor.id , vm.auditor.name
                 ,
                 {   from: vm.main_adr, 
-                    gas:100000
+                    gas:1000000
                 });
         }
 
@@ -251,6 +257,11 @@
                 gas: 1000000
             })
         }
+        vm.showInvestigation = function(){
+            vm.investigationTarget = vm.contract.getInvestigatedAdr.call(vm.target_adr);
+
+        }
+
         var filter = web3.eth.filter('latest');      
         // watch for changes
         filter.watch(function(error, result){
