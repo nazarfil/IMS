@@ -5,11 +5,12 @@ contract IMS {
     event feedBack(
         address indexed sender,
         address indexed data,
-        string out
+        string info
     );
-    event stringsFeedBack(
-        address indexed _from,
-        string added_string
+    event auditFeedback(
+        address indexed sender,
+        address indexed data,
+        string info
     );
     
     struct idValidator{
@@ -33,10 +34,10 @@ contract IMS {
     mapping (address => idCLient) public clients;
     mapping (address => idAuditor) public auditors;
     mapping (address => idValidator) public validators;
-
+    
+    mapping(address => address[]) public investigations;
     address public to_verify;
     address[] public registeredAddresses;
-    mapping(address => address[]) public investigations;
 
     string public contractName;
     function IMS(){
@@ -126,21 +127,47 @@ contract IMS {
         }        
     }
     
-    function changeClientData(address to_change, string new_hash ) payable{
-        if( clients[to_change].isRegistered && (validators[msg.sender].isRegistered || (msg.sender == to_change))){
-            //Change client's data
-            clients[to_verify].info_hash;
+    function changeClientData(address to_change, string new_hash) payable{
+        //address addr_sig = ecrecover(hash_msg, v, r, s);
+       /*
+        if( clients[to_change].isRegistered){
+            if(validators[msg.sender].isRegistered){
+                if(addr_sig == to_change){
+                    clients[to_verify].info_hash = new_hash;
+                }else
+                    throw;
+            }
+        } else if (msg.sender == to_change){
+            if(validators[addr_sig].isRegistered){
+                clients[to_verify].info_hash=new_hash;
+            }else 
+                throw;
+        }else 
+            throw;
+        */
+        if( clients[to_change].isRegistered){
+            if(validators[msg.sender].isRegistered){
+                    clients[to_change].info_hash = new_hash;
+                    feedBack(msg.sender, to_change, new_hash);
+            }else {
+                throw;}
+                
+        }else {
+            throw;
         }
+            
     }
 
-    function verifySignature( address to_compare, bytes32 hash_msg, uint8 v, bytes32 r, bytes32 s) returns(address){
-
-        bytes32 prefixedHash = sha3(hash_msg);
-        address addr_sig = ecrecover(prefixedHash, v, r, s);
+    function verifySignature( bytes32 hash_msg, uint8 v, bytes32 r, bytes32 s) returns(address){
+        address addr_sig = ecrecover(hash_msg, v, r, s);
         return addr_sig;// == to_compare;
         //return (addr_to_verify == addr_sig);
     }
 
+    function verifySignatureAddr(address t_compare, bytes32 hash_msg, uint8 v, bytes32 r, bytes32 s) returns(bool){
+        address addr_sig = ecrecover(hash_msg, v, r, s);
+        return t_compare == addr_sig;
+    }
     function verifySignatureStr( address to_compare, string hash_str, uint8 v, string r_str, string s_str) returns(bool){
         
         bytes32  r;
@@ -164,6 +191,7 @@ contract IMS {
     function addInvestigation(address to_investigate) payable{
         if(validators[msg.sender].isRegistered && clients[to_investigate].isRegistered){
             investigations[msg.sender].push(to_investigate);
+            auditFeedback(msg.sender, to_investigate, "Added investigation" );
         }
     }
 
@@ -173,12 +201,15 @@ contract IMS {
                 if(investigations[msg.sender][i] == to_delete){
                     investigations[msg.sender][i]=investigations[msg.sender][investigations[msg.sender].length];
                     delete investigations[msg.sender][investigations[msg.sender].length];
+                    auditFeedback(msg.sender, to_delete, "Deleted_investigation" );
                 }
 
             }
         }
     }
-
+    function getInvestigations(address auditor) returns(address[]){
+        return investigations[auditor];
+    }
     function getRegAddrs() returns( address [] ){
         return registeredAddresses;
     }

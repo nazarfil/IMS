@@ -23,3 +23,7 @@ section h2{
     background-color: #999;
     padding: 10 5 5 10;
 }
+
+.margined-btn{
+    margin: 2 3 2 3;
+}

@@ -8,12 +8,15 @@
         <link rel="stylesheet"  href="src/style.css" />
     </head>
 
-    <body class="container-fluid" ng-app="app" ng-controller='appController as vm'  class="ng-cloak">
-        <div classe="container">
+<body class="container-fluid" ng-app="app" ng-controller='appController as vm'  class="ng-cloak">
+
+<div classe="container">
             <div class="header" style="min-height:50px;">
                 {{vm.title}}
             </div>
+            
             <div class="container-fluid">
+
                 <div class="row">
                 <div class="col-md-6" >
                     <h2>Accounts List, select main:</h2>
@@ -66,7 +69,7 @@
                                     <button class="btn btn-warning" ng-click="vm.showContract()">Create Contract Object</button>
                                 </div>
                             </div>
-                        <hr>
+                                    <hr>
                         <div>
                             <div class="row">
                                 <h3>Change Contract Object Inut</h3>
@@ -86,7 +89,7 @@
                 </div>
             </div>
         </div>
-        <hr>
+        <hr>    
     <section class="container-fluid">
             <h2>Registration section</h2>
             <hr>
@@ -138,14 +141,14 @@
                         </form>
                     </div>
                 </div>
-</section>
+    </section>
 
-        <div class="container-fluid">
-            <h2>Verifying an address</h2>
+        <section class="container-fluid" style="margin-bottom:20px;">
+            <h2>Cleint identification</h2>
             <hr>
             <div class="row">
-                    <div class="col-md-6">
-                        <h3>Registration of a client</h3>
+                    <div class="col-md-4">
+                        <h3>Verify following information</h3>
                         <form class="form-group">
                             <label for="fname">Name</label>
                             <input id="fname" class="form-control" type="text" ng-model="vm.toVerify.fname">
@@ -164,17 +167,100 @@
 
                             <label for="country">Country</label>
                             <input id="country" class="form-control" type="text" ng-model="vm.toVerify.address.country">
-                            <button class="btn btn-danger" ng-click="vm.verifyClient()">Varify Client</button>
+                            <button class="btn btn-danger" ng-click="vm.verifyClient()">Verify Information</button>
+                        </form>
+                        <form>
+                            <div class="form-group">
+                                <label for="targetChange">Current Target {{vm.target_adr}}</label>
+                                <input id="targetchange" class="form-control" type="text" ng-model="vm.target_adr">
+                            </div>                            
                         </form>
                     </div>
+                    <div class="col-md-2"></div>
                     <div class="col-md-6">
-                        <h3>Dom soemthing else</h3>
-                                <div class="col-md-6">
-                                    <button class="btn btn-danger" ng-click="vm.verifySignature()">Verify Signature</button>
-                                </div>
+                     <h3>Verifying cleint's signed information</h3>
+                     <div class="row">
+                        <div class="col-md-6">
+                            <form class="form-group">
+                                <label for="hashId"> Input Hash</label>
+                                <input class="form-control" type="text" id="hashId" ng-model="vm.hashedInfo">
+                            </form>
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <button class="btn btn-primary" ng-click="vm.hashInfo();">Generate Hash</button>
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <button class="btn btn-warning" ng-click="vm.verifyClient();">Verify Hash</button>
+                        </div>
+                     </div>
+                      <div class="row">
+                        <div class="col-md-6 ">
+                            <form class="form-group">
+                                <label for="signId"> Input Signature</label>
+                                <input class="form-control" type="text" id="signId" ng-model="vm.signedHash">
+                            </form>
+                        </div>
+                         <div class="col-md-3 form-group">
+                              <button class="btn btn-primary" ng-click="vm.generateSignature();">Generate Signature</button>
+                         </div>
+                         <div class="col-md-3 form-group" >
+                              <button class="btn btn-warning" ng-click="vm.verifySignature();">Verify Signature</button>
+                         </div>
+                       </div>
+                       <div>
+                           <h5>Signature belongs to: {{vm.signatureStatus}}</h5>
+                       </div>
+                       <hr>
+                       <div>
+                           <h4>Use the signature and info to change client's data</h4>
+                           <div>
+                               <button class="btn btn-danger" ng-click="vm.changeClientData()">  Change Data  </button>
+                           </div>
+                       </div>
                     </div>
             </div>
-        </div>
+           
+         </section>
+
+    <section class="container-fluid" style="margin-bottom:20px;">
+            <h2>Auditing</h2>
+            <hr>
+            <div class="row">
+                    <div class="col-md-4">
+                        <h3>Request about following address</h3>
+                        <form>
+                            <div class="form-group">
+                                <label for="targetChange">Current Target {{vm.target_adr}}</label>
+                                <input id="targetchange" class="form-control" type="text" ng-model="vm.target_adr">
+                            </div>   
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <button class="btn btn-primary" ng-click="vm.addInvestigation()"> Add Request</button>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <button class="btn btn-danger" ng-click="vm.endInvestigation()"> Delete Request</button>
+                                    </div>
+                                </div>    
+                            </div>                         
+                        </form>
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                     <h3>Show requests</h3>
+                     <div>
+                         <div class="group-form">
+                             <button class="btn btn-primary" ng-class="vm.loadAudtors">
+                                Load Auditors
+                             </button>
+                         </div>
+                            <ul class="list-group">
+                                <li class="list-group-item"> Az </li>
+                            </ul>
+                     </div>
+                    </div>
+            </div>
+         </section>
      </div>
     </body>
 </html>
