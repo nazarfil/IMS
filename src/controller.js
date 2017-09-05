@@ -5,11 +5,13 @@
 
         $log.log('Controller initiated');
         var vm= this;
-
+        binaryContract = '0x'+binaryContract;
         //List indexes for active items
         vm.activeIndex = -1;
         vm.activeIndex2 = 0;
         vm.activeIndex3 =-1;
+
+        vm.temp_abi = abiContract;
         //Def client
         vm.client = {fname : 'Jo' , sname:'Do', address:{ street: 'Louise 116', city:'Brussels', country:'Belgium', region:1000}};
         vm.validator = {name:'Jo', id:10};
@@ -41,6 +43,7 @@
         var Web3 = require('web3');
         var web3 = new Web3();
         if(!web3.currentProvider){
+                   // web3 = new Web3(new web3.providers.HttpProvider("http://10.15.123.3:8545"));
                     web3 = new Web3(new web3.providers.HttpProvider("http://localhost:8545"));
 
         }
@@ -57,24 +60,33 @@
             vm.main_adr = acc;
             vm.activeIndex2 = idx;
         }
-
+        
+        var createContract = function () {
+            var defer = $q.defer();
+             web3.eth.sendTransaction( 
+                    {   from:vm.main_adr, 
+                        data: binaryContract, 
+                        gas: '2700000',
+                        }, 
+            function(err, transactionHash)  {
+                if(!err){
+                    defer.resolve(transactionHash);
+                     
+                }else{
+                    defer.reject(response);
+                }
+            });
+            return defer.promise;
+        };
         //Adds contract to the chain
         vm.addContract = function(){
-           // var compiledCode = require('../contract.js');
-            web3.eth.sendTransaction( 
-                    {   from: web3.eth.accounts[0], 
-                        data: binaryContract, 
-                        gas: '2700000'}, 
-                    function(err, transactionHash) {
-                if (!err){
-                    var receipt = web3.eth.getTransactionReceipt(transactionHash);
+
+            createContract().then(function(transactionHash){
+                var receipt = web3.eth.getTransactionReceipt(transactionHash);
                     console.log("Contract address" , receipt);
                     vm.minedContract.address = receipt.contractAddress;
                     vm.minedContract.abi = abiContract;
-                    $log.log(vm.minedContract);
-                    $scope.$apply();
-                }     
-            });
+            })
         };
 
         //Call contract details /addr from blockchain
@@ -160,35 +172,31 @@
         };
 
         vm.verifySignature = function(){
-                   /*   
-            var msg = new Buffer('hello');
-            //var msgBuffer = new Buffer(msg, 'hex');
-            //EC signature of the msg
-            var signature = web3.eth.sign(vm.target_adr,'0x'+ msg.toString('hex'));
-            //var signature = vm.signedHash;
-            signature = signature.split('x')[1];
-            var r = new Buffer(signature.substring(0, 64), 'hex')
-            var s = new Buffer(signature.substring(64, 128), 'hex')
-            var v = (parseInt(signature.substring(128, 130)) + 27).toString();
-
-            var verifySignature = vm.contract.verifySignature.call(vm.target_adr, msg, v, r, s);
-            //$log.log('V-R-S', v,r,s);
-            //$log.log('Sending', vm.target_adr, msgBuffer);
-           // $log.log('Msg', msgBuffer);
-            $log.log('r', r);
-            $log.log('s', s);
-            $log.log('v', v,(parseInt(signature.substring(128, 130)) + 27).toString());
-            
-            var msg = new Buffer('hello');
-            */
             var msg = new Buffer(vm.hashedInfo);
             var sig = vm.signedHash;
             const res = util.fromRpcSig(sig);
 
             const prefix = new Buffer("\x19Ethereum Signed Message:\n");
-            const prefixedMsg = util.sha3(
-            Buffer.concat([prefix, new Buffer(String(msg.length)), msg])
-            );
+            const prefixedMsg = util.sha3( Buffer.concat([prefix, new Buffer(String(msg.length)), msg])  );
+
+            const pubKey  = util.ecrecover(prefixedMsg, res.v, res.r, res.s);
+            const addrBuf = util.pubToAddress(pubKey);
+            const addr    = util.bufferToHex(addrBuf);
+            vm.signatureStatus = addr;
+            console.log(vm.target_adr,  addr, "DO they match", addr == vm.target_adr);
+           /* var verifySignature = vm.contract.verifySignature.call(prefixedMsg , res.v, res.r, res.s);
+            $log.log(prefixedMsg, res.v, res.r, res.s);
+            $log.log('Signature returned', verifySignature);*/
+        };
+
+        vm.verifySignature2 = function(){
+            /*
+            var msg = new Buffer(vm.hashedInfo);
+            var sig = vm.signedHash;
+            const res = util.fromRpcSig(sig);
+
+            const prefix = new Buffer("\x19Ethereum Signed Message:\n");
+            const prefixedMsg = util.sha3(msg);//util.sha3( Buffer.concat([prefix, new Buffer(String(msg.length)), msg])  );
 
             const pubKey  = util.ecrecover(prefixedMsg, res.v, res.r, res.s);
             const addrBuf = util.pubToAddress(pubKey);
@@ -196,12 +204,23 @@
             vm.signatureStatus = addr;
             console.log(vm.target_adr,  addr);
             var verifySignature = vm.contract.verifySignature.call(prefixedMsg , res.v, res.r, res.s);
-            //var verifySignatureAddr = vm.contract.verifySignature.call(vm.target_adr, prefixedMsg , res.v, res.r, res.s);
+            $log.log(prefixedMsg, res.v, res.r, res.s);
             $log.log('Signature returned', verifySignature);
-            //var verifySignature = vm.contract.verifySignature.call(msg, v, r, s);
-            //$log.log('Is signature good?', verifySignature);
+            */
+            var msg = web3.sha3("hello");
+            const sig = web3.eth.sign(vm.target_adr, msg);
+            var r = "0x" + sig.slice(2, 66);
+            var s = "0x" + sig.slice(66, 132);
+            var v = new Buffer(sig.slice(130, 132), "hex");
+                //v = 27;
+            $log.log("r: ", r, "s: ", s, "v: ", v);
+            var h = util.sha3(msg);
+            var verifySignature = vm.contract.verifySignatureStr.call(vm.target_adr,h , 27, r, s);
+            $log.log(verifySignature);
+            var verifySignature = vm.contract.verifySignatureStr.call(vm.target_adr,h , 28, r, s);
+            $log.log(verifySignature);
         };
-        
+
         //Adds a validator to the chain
         vm.addValidator = function(){
             $log.log('Sending to', vm.target_adr, vm.validator);
@@ -231,14 +250,24 @@
             var msg = new Buffer(vm.hashedInfo);
             var sig = vm.signedHash;
             const res = util.fromRpcSig(sig);
+
             const prefix = new Buffer("\x19Ethereum Signed Message:\n");
-            const prefixedMsg = util.sha3(
-            Buffer.concat([prefix, new Buffer(String(msg.length)), msg])
-            );      
-            vm.contract.changeClientData(vm.target_adr, vm.hashedInfo, {
-                from: vm.main_adr,
-                gas: 1000000
-            });
+            const prefixedMsg = util.sha3( Buffer.concat([prefix, new Buffer(String(msg.length)), msg])  );
+
+            const pubKey  = util.ecrecover(prefixedMsg, res.v, res.r, res.s);
+            const addrBuf = util.pubToAddress(pubKey);
+            const addr    = util.bufferToHex(addrBuf);
+            
+            if(addr == vm.target_adr ){
+                vm.contract.changeClientData(vm.target_adr, vm.hashedInfo, {
+                    from: vm.main_adr,
+                    gas: 1000000
+                });
+            }else{
+                vm.contract.failSugnature.call();
+            }
+
+
         }
 
         vm.addInvestigation = function(){

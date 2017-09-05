@@ -1,0 +1,8 @@
+Welcome to the Geth JavaScript console!
+
+instance: Geth/v1.6.0-stable-facc47cb/linux-amd64/go1.8.1
+coinbase: 0xfc6195f7fc63ab0db97f7e2cf87b6efa00e83d06
+at block: 100 (Fri, 18 Aug 2017 19:22:31 CEST)
+ datadir: /home/fnazar/.ethereum
+ modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txpool:1.0 web3:1.0
+

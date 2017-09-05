@@ -4,8 +4,8 @@ contract IMS {
     
     event feedBack(
         address indexed sender,
-        address indexed data,
-        string info
+        address indexed client,
+        string information
     );
     event auditFeedback(
         address indexed sender,
@@ -126,7 +126,11 @@ contract IMS {
             }
         }        
     }
-    
+    function failSugnature() returns (bool){
+        throw;
+        return false;
+    }
+ 
     function changeClientData(address to_change, string new_hash) payable{
         //address addr_sig = ecrecover(hash_msg, v, r, s);
        /*
@@ -168,23 +172,13 @@ contract IMS {
         address addr_sig = ecrecover(hash_msg, v, r, s);
         return t_compare == addr_sig;
     }
-    function verifySignatureStr( address to_compare, string hash_str, uint8 v, string r_str, string s_str) returns(bool){
-        
-        bytes32  r;
-        bytes32  s;  
-        bytes32 hash_b32;
-        
-        assembly{
-            r:= mload(add(r_str, 32))
-            s:= mload(add(s_str, 32))
-            hash_b32:= mload(add(hash_str, 32))
-        }
-               
+    function verifySignatureStr( address to_compare, bytes32 hash_str, uint8 v, bytes32 r, bytes32 s) returns(address){
+          
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        bytes32 prefixedHash = sha3(prefix, hash_b32);
+        bytes32 prefixedHash = sha3(prefix, hash_str);
         
         address addr_sig = ecrecover(prefixedHash, v, r, s);
-        return addr_sig == to_compare;
+        return addr_sig ;//== to_compare;
         
     }
 

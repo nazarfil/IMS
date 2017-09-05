@@ -1,0 +1,6 @@
+=============== Aug 18, 2017 (CEST) ===============
+18:34:58.311974 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:34:58.318202 db@open opening
+18:34:58.319621 version@stat F·[] S·0B[] Sc·[]
+18:34:58.346517 db@janitor F·2 G·0
+18:34:58.346605 db@open done T·28.377731ms
